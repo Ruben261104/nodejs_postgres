@@ -29,7 +29,7 @@ services:
       - DATABASE_URL=postgres://postgres:mysecretpassword@db:5439/mydb
       - NODE_ENV= production
     restart: unless-stopped
-    command: ["node", "server.js"]
+    command: ["npm", "run", "start"]
 
 volumes:
   db_data:
