@@ -62,6 +62,8 @@ jobs:
             
             cd ~/nodejs_postgres_ruben
             
-            docker pull "${{ secrets.IMAGE_NAME }}:latest"
-            docker compose -f docker-compose.prod.yml up -d
+            export DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+            
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.IMAGE_NAME }}:latest
+            docker compose -p ${{ secrets.DOCKERHUB_USERNAME }} -f docker-compose.prod.yml up -d
             docker image prune -f
