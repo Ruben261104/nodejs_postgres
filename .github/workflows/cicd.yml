@@ -47,8 +47,9 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: "docker-compose.prod.yml"
+          source: "docker-compose.prod.yml,init-db.sql"
           target: "${{ env.TARGET_DIR }}"
+          overwrite: true
 
       - name: Deploy on server (SSH)
         uses: appleboy/ssh-action@v1.0.3
@@ -58,12 +59,11 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-
+            set -e
             cd ${{ env.TARGET_DIR }}
             
             export DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
             
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.IMAGE_NAME }}:latest
-            docker compose -p ${{ secrets.DOCKERHUB_USERNAME }} -f docker-compose.prod.yml down --remove-orphans
-            docker compose -p ${{ secrets.DOCKERHUB_USERNAME }} -f docker-compose.prod.yml up -d
+            docker pull "${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.IMAGE_NAME }}:latest"
+            docker compose -p ${{ secrets.IMAGE_NAME }} -f docker-compose.prod.yml up -d --remove-orphans
             docker image prune -f
