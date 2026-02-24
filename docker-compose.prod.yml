@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:13
+    container_name: postgres_db_ruben
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: mydb
+    ports:
+      - "5439:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+
+  node:
+    image: ruben2611/nodejs_postgres:latest
+    container_name: nodejs_app_ruben
+    depends_on:
+      - db
+    ports:
+      - "3026:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - DATABASE_URL=postgres://postgres:mysecretpassword@db:5439/mydb
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    restart: unless-stopped
+    command: ["npm", "run", "dev"]
+
+
+volumes:
+  db_data:
