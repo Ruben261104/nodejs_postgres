@@ -67,5 +67,5 @@ jobs:
             
             docker pull "${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.IMAGE_NAME }}:latest"
             docker compose -p ${{ secrets.IMAGE_NAME }} -f docker-compose.prod.yml down
-            docker compose -p ${{ secrets.IMAGE_NAME }} -f docker-compose.prod.yml up -d --remove-orphans
+            docker compose -p ${{ secrets.IMAGE_NAME }} -f docker-compose.prod.yml up -d
             docker image prune -f

@@ -31,6 +31,5 @@ services:
     restart: unless-stopped
     command: ["npm", "run", "dev"]
 
-
 volumes:
   db_data:

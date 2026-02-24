@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   db:
     image: postgres:13
@@ -16,7 +14,7 @@ services:
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
 
   node:
-    image: ${DOCKERHUB_USERNAME}/nodejs_postgres:latest
+    image: ruben2611/nodejs_postgres:latest
     container_name: nodejs_app_ruben
     depends_on:
       - db
