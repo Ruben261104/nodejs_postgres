@@ -13,4 +13,4 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Docker image
-        run: docker build -t nodejs_postgres:test
+        run: docker build -t nodejs_postgres:test .
