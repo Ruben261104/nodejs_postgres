@@ -17,7 +17,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - ".:/etc/traefik"
     networks:
-      - web
+      - web_ruben
 
 
   db:
@@ -29,7 +29,7 @@ services:
       POSTGRES_PASSWORD: mysecretpassword
       POSTGRES_DB: mydb
     networks:
-      - web
+      - web_ruben
     ports:
       - "5439:5432"
     volumes:
@@ -49,7 +49,7 @@ services:
     restart: unless-stopped
     command: ["npm", "run", "start"]
     networks:
-      - web
+      - web_ruben
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.node.rule=Host(`ruben.soudry_ort.online`)"
@@ -60,5 +60,5 @@ volumes:
   db_data:
 
 networks:
-  web:
+  web_ruben:
     driver: bridge
