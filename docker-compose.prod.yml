@@ -32,9 +32,9 @@ services:
       - web
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.node.rule=Host(`ruben.soudry-ort.online`)"
-      - "traefik.http.routers.node.entrypoints=web"
-      - "traefik.http.services.node.loadbalancer.server.port=3000"
+      - "traefik.http.routers.ruben.rule=Host(`ruben.soudry-ort.online`)"
+      - "traefik.http.routers.ruben.entrypoints=web"
+      - "traefik.http.services.ruben.loadbalancer.server.port=3000"
 
 volumes:
   db_data:
