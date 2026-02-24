@@ -24,6 +24,7 @@ services:
       - DATABASE_URL=postgres://postgres:mysecretpassword@db:5432/mydb
       - NODE_ENV= production
     restart: unless-stopped
+    command: ["npm", "run", "start"]
 
 volumes:
   db_data:
