@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: mysecretpassword
       POSTGRES_DB: mydb
     networks:
-      - web
+      - app_web
     ports:
       - "5439:5432"
     volumes:
@@ -29,7 +29,7 @@ services:
     restart: unless-stopped
     command: ["npm", "run", "start"]
     networks:
-      - web
+      - app_web
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.node.rule=Host(`ruben.soudry-ort.online`)"
@@ -40,5 +40,5 @@ volumes:
   db_data:
 
 networks:
-  web:
+  app_web:
     external: true
