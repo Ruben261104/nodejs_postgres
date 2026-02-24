@@ -27,7 +27,7 @@ services:
     command: ["npm", "run", "start"]
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.node.rule=Host(`app.rubenTest.com`)"
+      - "traefik.http.routers.node.rule=Host(`ruben.soudry_ort.online`)"
       - "traefik.http.routers.node.entrypoints=web"
       - "traefik.http.services.node.loadbalancer.server.port=3026"
 
