@@ -7,7 +7,7 @@ on:
 
 env:
   IMAGE_NAME: ${{ secrets.IMAGE_NAME }}
-  TARGET_DIR: nodejs_postgres_ruben
+  TARGET_DIR: ~/nodejs_postgres_ruben
 
 jobs:
   build-and-push:
@@ -47,7 +47,6 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
           source: "docker-compose.prod.yml"
           target: "${{ env.TARGET_DIR }}"
 
@@ -60,6 +59,8 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             set -e
+            
+            cd ~/nodejs_postgres_ruben
             
             docker pull "${{ secrets.IMAGE_NAME }}:latest"
             docker compose -f docker-compose.prod.yml up -d
