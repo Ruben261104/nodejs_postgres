@@ -38,3 +38,7 @@ services:
 
 volumes:
   db_data:
+
+networks:
+  web:
+    external: true
