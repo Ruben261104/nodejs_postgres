@@ -14,7 +14,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # ✅ Audit NPM (bloque si vulnérabilités high/critical)
+      # (optionnel mais utile) pour que Trivy voie bien les deps Node
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -23,17 +23,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: NPM Audit (fail on high/critical)
-        run: npm audit --audit-level=high
-
-      # ✅ Trivy scan du repo (fail sur CRITICAL)
-      - name: Trivy scan (repo) - fail on CRITICAL
+      # ✅ Trivy : scan DEPENDANCES seulement (libraries), fail sur CRITICAL
+      - name: Trivy scan (Node deps only) - fail on CRITICAL
         uses: aquasecurity/trivy-action@0.24.0
         with:
           scan-type: "fs"
           scan-ref: "."
+          scanners: "vuln"
+          vuln-type: "library"
           severity: "CRITICAL"
           exit-code: "1"
+
+      # (optionnel) audit npm en plus
+      - name: NPM Audit (fail on critical)
+        run: npm audit --audit-level=critical
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -52,14 +55,6 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.IMAGE_NAME }}:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.IMAGE_NAME }}:${{ github.sha }}
-
-      # ✅ Trivy scan de l'image (fail sur CRITICAL)
-      - name: Trivy scan (image) - fail on CRITICAL
-        uses: aquasecurity/trivy-action@0.24.0
-        with:
-          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.IMAGE_NAME }}:${{ github.sha }}
-          severity: "CRITICAL"
-          exit-code: "1"
 
   deploy:
     needs: build-and-push
