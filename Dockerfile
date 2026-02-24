@@ -20,4 +20,4 @@ RUN npm install -g nodemon
 EXPOSE 3000
 
 # Commande de démarrage avec Nodemon
-CMD ["npm", "run", "dev"]
+CMD ["npm", "start"]
