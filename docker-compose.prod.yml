@@ -1,26 +1,5 @@
 services:
 
-  traefik:
-    image: "traefik:v2.6"
-    container_name: "traefik_ruben"
-    command:
-      - "--api.insecure=true"
-      - "--api.dashboard=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--providers.file.directory=/etc/traefik"
-      - "--providers.file.watch=true"
-      - "--entrypoints.web.address=:81"
-    ports:
-      - "81:81"
-      - "8081:8080"
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - ".:/etc/traefik"
-    networks:
-      - web_ruben
-
-
   db:
     image: postgres:13
     container_name: postgres_db_ruben
@@ -30,7 +9,7 @@ services:
       POSTGRES_PASSWORD: mysecretpassword
       POSTGRES_DB: mydb
     networks:
-      - web_ruben
+      - web
     ports:
       - "5439:5432"
     volumes:
@@ -50,7 +29,7 @@ services:
     restart: unless-stopped
     command: ["npm", "run", "start"]
     networks:
-      - web_ruben
+      - web
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.node.rule=Host(`ruben.soudry-ort.online`)"
@@ -59,7 +38,3 @@ services:
 
 volumes:
   db_data:
-
-networks:
-  web_ruben:
-    driver: bridge
