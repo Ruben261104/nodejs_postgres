@@ -4,10 +4,8 @@ on:
   push:
     branches: ["main"]
 
-
 env:
-  IMAGE_NAME: ${{ secrets.IMAGE_NAME }}
-  TARGET_DIR: ~/nodejs_postgres_ruben
+  TARGET_DIR: /home/${{ secrets.SSH_USER }}/nodejs_postgres_ruben
 
 jobs:
   build-and-push:
@@ -15,6 +13,27 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # ✅ Audit NPM (bloque si vulnérabilités high/critical)
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: NPM Audit (fail on high/critical)
+        run: npm audit --audit-level=high
+
+      # ✅ Trivy scan du repo (fail sur CRITICAL)
+      - name: Trivy scan (repo) - fail on CRITICAL
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          scan-type: "fs"
+          scan-ref: "."
+          severity: "CRITICAL"
+          exit-code: "1"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -33,6 +52,14 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.IMAGE_NAME }}:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.IMAGE_NAME }}:${{ github.sha }}
+
+      # ✅ Trivy scan de l'image (fail sur CRITICAL)
+      - name: Trivy scan (image) - fail on CRITICAL
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.IMAGE_NAME }}:${{ github.sha }}
+          severity: "CRITICAL"
+          exit-code: "1"
 
   deploy:
     needs: build-and-push
@@ -61,11 +88,10 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             set -e
-            cd ${{ env.TARGET_DIR }}
-            
-            export DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
-            
+            mkdir -p "${{ env.TARGET_DIR }}"
+            cd "${{ env.TARGET_DIR }}"
+
             docker pull "${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.IMAGE_NAME }}:latest"
-            docker compose -p ${{ secrets.IMAGE_NAME }} -f docker-compose.prod.yml down
-            docker compose -p ${{ secrets.IMAGE_NAME }} -f docker-compose.prod.yml up -d
+            docker compose -p "${{ secrets.IMAGE_NAME }}" -f docker-compose.prod.yml down
+            docker compose -p "${{ secrets.IMAGE_NAME }}" -f docker-compose.prod.yml up -d --remove-orphans
             docker image prune -f
