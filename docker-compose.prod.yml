@@ -26,7 +26,7 @@ services:
       - .:/app
       - /app/node_modules
     environment:
-      - DATABASE_URL=postgres://postgres:mysecretpassword@db:5439/mydb
+      - DATABASE_URL=postgres://postgres:mysecretpassword@db:5432/mydb
       - NODE_ENV= production
     restart: unless-stopped
     command: ["npm", "run", "start"]
