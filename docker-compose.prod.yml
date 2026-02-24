@@ -14,7 +14,7 @@ services:
       - db_data:/var/lib/postgresql/data
 
   node:
-    image: ruben2611/nodejs_postgres:latest
+    image: ${DOCKERHUB_USERNAME}/nodejs_postgres:latest
     container_name: nodejs_app_ruben
     depends_on:
       - db
