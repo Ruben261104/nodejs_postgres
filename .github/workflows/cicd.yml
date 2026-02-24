@@ -42,7 +42,6 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             set -e
-            cd /opt/nodejs_postgres
             docker pull "${{ secrets.IMAGE_NAME }}:latest"
             docker compose up -d
             docker image prune -f
