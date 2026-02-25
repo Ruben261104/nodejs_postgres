@@ -35,9 +35,10 @@ services:
       - "traefik.http.routers.ruben.rule=Host(`ruben.soudry-ort.online`)"
       - "traefik.http.routers.ruben.entrypoints=web"
       - "traefik.http.services.ruben.loadbalancer.server.port=3000"
-      - "traefik.http.routers.karate-http.rule=Host(`ruben.soudry-ort.online`)"
-      - "traefik.http.routers.karate-http.entrypoints=web"
-      - "traefik.http.routers.karate-http.middlewares=redirect-to-https"
+        # Routeur HTTP → redirect HTTPS (commentaire OK, sans "-")
+      - "traefik.http.routers.ruben-http.rule=Host(`ruben.soudry-ort.online`)"
+      - "traefik.http.routers.ruben-http.entrypoints=web"
+      - "traefik.http.routers.ruben-http.middlewares=redirect-to-https"
 
 volumes:
   db_data:
